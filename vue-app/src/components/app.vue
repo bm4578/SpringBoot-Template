@@ -2,7 +2,7 @@
   <div class="app">
     <el-button
         size="mini"
-        @click="handleAdd()">新增
+        @click="handleOpen()">新增
     </el-button>
     <el-table
         :data="this.page.pageData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
@@ -15,10 +15,13 @@
       <!--      +++++++++++++++++++++++++ 数据列信息++++++++++++++++++++++++++++-->
       <el-table-column
           label="名称"
-          :prop=this.env.message>
+          :prop=this.env.email>
+      </el-table-column>
+      <el-table-column
+          label="info"
+          :prop=this.env.info>
       </el-table-column>
       <!--      +++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-
       <el-table-column
           align="right">
         <template slot="header" slot-scope="scope">
@@ -40,6 +43,44 @@
         </template>
       </el-table-column>
     </el-table>
+
+    <!--    表单-->
+    <el-dialog title="添加" :visible.sync="dialogFormVisible">
+      <el-form :model="form">
+        <!--      +++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+        <el-form-item label="邮箱" :label-width="formLabelWidth">
+          <el-input v-model="form.email" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="info" :label-width="formLabelWidth">
+          <el-input v-model="form.info" autocomplete="off"></el-input>
+        </el-form-item>
+        <!--      +++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="handleAdd()">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <!--    表单-->
+    <el-dialog title="修改" :visible.sync="update">
+      <el-form :model="form">
+        <!--      +++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+        <el-form-item label="邮箱" :label-width="formLabelWidth">
+          <el-input v-model="form.email" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="info" :label-width="formLabelWidth">
+          <el-input v-model="form.info" autocomplete="off"></el-input>
+        </el-form-item>
+        <!--      +++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="update = false">取 消</el-button>
+        <el-button type="primary" @click="handleUpdate()">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <br>
     <br>
     <!--    分页-->
     <div class="block">
@@ -53,6 +94,7 @@
           @current-change="handleCurrentChange">
       </el-pagination>
     </div>
+
   </div>
 </template>
 
@@ -64,11 +106,21 @@ export default {
   name: 'app',
   data() {
     return {
+      formLabelWidth: '80px',
+      update: false,
+      dialogTableVisible: false,
+      dialogFormVisible: false,
+      form: {
+        id:'',
+        email: '',
+        info: ''
+      },
       // 系统变量配置文件
-      env:{
-        id:'id', //修改数据时需要传入id
-        message:'email',  //传入后端的参数，以及列表信息
-        url:'/api/user/'  //后端url配置
+      env: {
+        id: 'id', //修改数据时需要传入id
+        email: 'email',  //传入后端的参数，以及列表信息
+        info: 'info',
+        url: '/api/user/'  //后端url配置
       },
       //分页
       page: {
@@ -83,66 +135,49 @@ export default {
   },
   //调用方法
   methods: {
-    //新增
+    //添加
     handleAdd() {
-      this.$prompt('请输入名称', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        inputPattern: /^[\s\S]*.*[^\s][\s\S]*$/,   //正则非空校验
-        inputErrorMessage: '不能为空'
-      }).then(({value}) => {
-        // //使用表单传递参数
-        const params =  new URLSearchParams();
-        params.append(this.env.message,value)
-        axios.post(this.env.url,params).then(res=>{
-          if (res.data){
-            this.$message({
-              type: 'success',
-              message: '添加成功'
-            });
-          }
-          this.refresh()
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '取消输入'
-        });
-      });
+      this.dialogFormVisible = false
+      // //使用表单传递参数
+      const params = new URLSearchParams();
+      params.append(this.env.email, this.form.email)
+      params.append(this.env.info, this.form.info)
+      axios.post(this.env.url, params).then(res => {
+        if (res.data) {
+          this.$message({
+            type: 'success',
+            message: '添加成功'
+          });
+        }
+        this.refresh()
+      })
     },
     //修改
+    handleUpdate(row){
+      // //使用表单传递参数
+      const params = new URLSearchParams();
+      params.append(this.env.id,this.form.id)
+      params.append(this.env.email,this.form.email)
+      params.append(this.env.info,this.form.info)
+      axios.put(this.env.url, params).then(res => {
+        if (res.data) {
+          this.$message({
+            type: 'success',
+            message: '修改成功'
+          });
+        }
+        this.refresh()
+      })
+    },
+    //编辑页面
     handleEdit(index, row) {
-      this.$prompt('请输入名称', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        inputPattern: /^[\s\S]*.*[^\s][\s\S]*$/,   //正则非空校验
-        inputErrorMessage: '不能为空'
-      }).then(({value}) => {
-        console.log(value)
-        // //使用表单传递参数
-        const params =  new URLSearchParams();
-        params.append(this.env.id,row.id)
-        params.append(this.env.message,value)
-        axios.put(this.env.url,params).then(res=>{
-          if (res.data){
-            this.$message({
-              type: 'success',
-              message: '修改成功'
-            });
-          }
-          this.refresh()
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '取消输入'
-        });
-      });
+      this.update = true
+      this.form.id = row.id
     },
     //删除
     handleDelete(index, row) {
-      axios.delete(this.env.url + row.id).then(res=>{
-        if (res.data){
+      axios.delete(this.env.url + row.id).then(res => {
+        if (res.data) {
           this.$message({
             type: 'success',
             message: '删除成功'
@@ -169,9 +204,15 @@ export default {
       })
     },
     // 刷新页面
-    refresh(){
-      router.go(0)
-    }
+    refresh() {
+      setTimeout(function () {
+        location.reload();
+      }, 500);
+    },
+    //打开表单
+    handleOpen() {
+      this.dialogFormVisible = true
+    },
   },
   //初始化加载
   mounted() {
@@ -179,3 +220,14 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.app {
+  margin: 20px auto;
+}
+
+.block {
+  display: flex;
+  justify-content: center;
+}
+</style>
