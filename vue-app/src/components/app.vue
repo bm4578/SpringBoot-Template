@@ -67,8 +67,8 @@ export default {
       // 系统变量配置文件
       env:{
         id:'id', //修改数据时需要传入id
-        message:'username',  //传入后端的参数，以及列表信息
-        url:'/api/book/'  //后端url配置
+        message:'email',  //传入后端的参数，以及列表信息
+        url:'/api/user/'  //后端url配置
       },
       //分页
       page: {
@@ -112,18 +112,18 @@ export default {
     },
     //修改
     handleEdit(index, row) {
-      console.log(index, row.id);
       this.$prompt('请输入名称', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         inputPattern: /^[\s\S]*.*[^\s][\s\S]*$/,   //正则非空校验
         inputErrorMessage: '不能为空'
       }).then(({value}) => {
+        console.log(value)
         // //使用表单传递参数
         const params =  new URLSearchParams();
         params.append(this.env.id,row.id)
         params.append(this.env.message,value)
-        axios.put(this.data.url,params).then(res=>{
+        axios.put(this.env.url,params).then(res=>{
           if (res.data){
             this.$message({
               type: 'success',
