@@ -7,21 +7,15 @@
     <el-table
         :data="this.page.pageData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
         style="width: 100%">
-      <el-table-column
-          label="ID"
-          prop="id">
-      </el-table-column>
-
       <!--      +++++++++++++++++++++++++ 数据列信息++++++++++++++++++++++++++++-->
-      <el-table-column
-          label="名称"
-          :prop=this.env.email>
-      </el-table-column>
-      <el-table-column
-          label="info"
-          :prop=this.env.info>
-      </el-table-column>
-      <!--      +++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+
+      <div class="item" v-for="(index, key) in form" :key="key">
+        <el-table-column
+            :label=key
+            :prop=key>
+        </el-table-column>
+      </div>
+   <!-- ===============按钮++++++++++++++++++++++-->
       <el-table-column
           align="right">
         <template slot="header" slot-scope="scope">
@@ -42,6 +36,7 @@
           </el-button>
         </template>
       </el-table-column>
+
     </el-table>
 
     <!--    表单-->
@@ -61,8 +56,6 @@
         <el-button type="primary" @click="handleAdd()">确 定</el-button>
       </div>
     </el-dialog>
-
-    <!--    表单-->
     <el-dialog title="修改" :visible.sync="update">
       <el-form :model="form">
         <!--      +++++++++++++++++++++++++++++++++++++++++++++++++++++-->
@@ -95,13 +88,13 @@
       </el-pagination>
     </div>
 
+
+
   </div>
 </template>
 
 <script>
 import axios from "axios";
-import router from "@/router";
-
 export default {
   name: 'app',
   data() {
@@ -110,10 +103,15 @@ export default {
       update: false,
       dialogTableVisible: false,
       dialogFormVisible: false,
-      form: {
-        id:'',
+      edit: {
         email: '',
         info: ''
+      },
+      // 列数据
+      form: {
+        email: '',
+        id:'',
+        info: '',
       },
       // 系统变量配置文件
       env: {
