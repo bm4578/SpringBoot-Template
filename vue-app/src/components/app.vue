@@ -68,9 +68,9 @@
         <el-button type="primary" @click="handleUpdate()">确 定</el-button>
       </div>
     </el-dialog>
+    <br>
+    <br>
 
-    <br>
-    <br>
     <!--    分页-->
     <div class="block">
       <el-pagination
@@ -83,7 +83,6 @@
           @current-change="handleCurrentChange">
       </el-pagination>
     </div>
-
   </div>
 </template>
 
