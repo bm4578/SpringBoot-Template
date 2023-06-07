@@ -13,7 +13,7 @@ import lombok.Data;
  * (User)表实体类
  *
  * @author 白也
- * @since 2023-04-23 21:41:20
+ * @since 2023-06-07 10:26:59
  */
 @SuppressWarnings("serial")
 @Data

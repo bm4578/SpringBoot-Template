@@ -5,23 +5,20 @@
         @click="handleOpen()">新增
     </el-button>
     <el-table
-        :data="this.page.pageData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
+        :data="this.page.pageData.filter(data => !search || data.email.toLowerCase().includes(search.toLowerCase()))"
         style="width: 100%">
-      <!--      +++++++++++++++++++++++++ 数据列信息++++++++++++++++++++++++++++-->
-
       <div class="item" v-for="(index, key) in form" :key="key">
         <el-table-column
             :label=key
             :prop=key>
         </el-table-column>
       </div>
-   <!-- ===============按钮++++++++++++++++++++++-->
       <el-table-column
           align="right">
         <template slot="header" slot-scope="scope">
           <el-input
               v-model="search"
-              placeholder="输入关键字搜索"
+              placeholder="输入邮箱搜索"
               size="mini"/>
         </template>
         <template slot-scope="scope">
@@ -38,7 +35,6 @@
       </el-table-column>
 
     </el-table>
-
     <!--    表单-->
     <el-dialog title="添加" :visible.sync="dialogFormVisible">
       <el-form :model="form">
@@ -103,15 +99,11 @@ export default {
       update: false,
       dialogTableVisible: false,
       dialogFormVisible: false,
-      edit: {
-        email: '',
-        info: ''
-      },
       // 列数据
       form: {
-        email: '',
-        id:'',
         info: '',
+        id:'',
+        email: '',
       },
       // 系统变量配置文件
       env: {
