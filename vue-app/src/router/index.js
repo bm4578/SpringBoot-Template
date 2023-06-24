@@ -18,12 +18,6 @@ const routes = [
         }
     },
     {
-        path: '/search',
-        name: 'search',
-        component: function () {
-            return import('../views/search.vue')
-        },
-    }, {
         path: '/loading',
         name: 'loading',
         component: function () {
