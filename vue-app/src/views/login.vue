@@ -46,9 +46,16 @@ export default {
         if (valid) {
           console.log(this.loginForm)
           this.loading = true
-          if (this.loginForm.password === '123456' || this.loginForm.username === 'wrebecca630@icloud.com'){
+          // 后端登录逻辑
+          if (this.loginForm.password === '123456' && this.loginForm.username === 'wrebecca630@icloud.com'){
+            // 成功
             this.$router.push('/')
             this.loading = false
+          }else {
+            // 失败
+            this.loading = false
+            this.$router.push('/login')
+            this.$message.error('账号或密码错误，请重新登陆');
           }
         } else {
           return false
